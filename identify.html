@@ -993,20 +993,7 @@
             document.getElementById('resultSection').classList.add('active');
         }
 
-        // ==================== 貼紙動畫 ====================
         
-        function showStickerAnimation(ladybugName) {
-            const info = ladybugDatabase[ladybugName];
-            if (!info) return;
-            
-            document.getElementById('stickerIcon').textContent = info.icon;
-            document.getElementById('stickerName').textContent = ladybugName;
-            document.getElementById('stickerOverlay').classList.add('active');
-        }
-
-        function closeStickerOverlay() {
-            document.getElementById('stickerOverlay').classList.remove('active');
-        }
 
         // ==================== 重置 ====================
         
