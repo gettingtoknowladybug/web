@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>保護瓢蟲 - 瓢蟲·集</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-bg: #FFFFFF;
+            --color-text: #1A1A1A;
+            --color-accent: #C72027;
+            --color-line: #D0D0D0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", 
+                         "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* 三欄佈局 */
+        .page-wrapper {
+            display: grid;
+            grid-template-columns: 1fr minmax(auto, 500px) 1fr;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .side-panel {
+            background: #F5F5F5;
+            background-image: url('background.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .main-content {
+            background: var(--color-bg);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: var(--color-accent);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .header-logo {
+            height: 50px;
+            cursor: pointer;
+        }
+
+        .header-logo img {
+            height: 100%;
+            width: auto;
+        }
+
+        .hamburger-menu {
+            position: absolute;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            gap: 6px;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .hamburger-line {
+            width: 30px;
+            height: 3px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        /* Side Menu */
+        .side-menu {
+            position: fixed;
+            top: -100%;
+            left: 0;
+            right: 0;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            background: var(--color-accent);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: top 0.4s ease;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .side-menu.active {
+            top: 0;
+        }
+    .menu-item-icon {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            background: #FFFFFF;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        .menu-header {
+            background: var(--color-accent);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .menu-close {
+            width: 40px;
+            height: 40px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-close:hover {
+            transform: rotate(90deg);
+        }
+
+        .menu-content {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .menu-nav {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            width: 100%;
+        }
+
+        .menu-item {
+            text-decoration: none;
+            color: white;
+            font-size: 1.125rem;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            position: relative;
+            letter-spacing: 0.05em;
+        }
+
+        .menu-item:hover {
+            opacity: 0.7;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 9999;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            padding: 3rem 2rem;
+            overflow-y: auto;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.6;
+            margin-bottom: 2.5rem;
+            line-height: 1.8;
+        }
+/* Step Image Block */
+        .step-image-block {
+            width: 100%;
+            min-height: 180px;
+            background: #f0f0f0;
+            border: 1px dashed var(--color-line);
+            margin-bottom: 1rem;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .step-image-block img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        .step-image-block img.loaded {
+            opacity: 1;
+        }
+
+        .step-image-block.no-image::after {
+            content: '';
+            display: block;
+            width: 100%;
+            min-height: 180px;
+        }
+        /* Steps Container */
+        .steps-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .step-item {
+            background: #FAFAFA;
+            border: 1px solid var(--color-line);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .step-item:hover {
+            border-color: var(--color-accent);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .step-number {
+            width: 45px;
+            height: 45px;
+            background: var(--color-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .step-title {
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+
+        .step-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .step-box {
+            background: white;
+            border: 1px solid var(--color-line);
+            padding: 1rem;
+            font-size: 0.875rem;
+            line-height: 1.8;
+        }
+
+        .step-box-title {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-image {
+            width: 100%;
+            margin-top: 0.5rem;
+            border: 1px solid var(--color-line);
+        }
+
+        .step-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+/* 收尾區塊 */
+        .closing-block {
+            margin-top: 3rem;
+            padding: 2.5rem 1.5rem 1rem;
+            border-top: 1px solid var(--color-line);
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.9s ease, transform 0.9s ease;
+        }
+
+        .closing-block.fade-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .closing-text {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .closing-quote {
+            font-size: 1.125rem;
+            font-weight: 500;
+            line-height: 1.9;
+            color: var(--color-accent);
+            margin-bottom: 1rem;
+            letter-spacing: 0.03em;
+        }
+
+        .closing-sub {
+            font-size: 0.875rem;
+            opacity: 0.65;
+            line-height: 1.9;
+        }
+
+        /* Bottom Actions */
+        .bottom-actions {
+            margin-top: 2rem;
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-button {
+            padding: 0.875rem 1.75rem;
+            background: var(--color-text);
+            color: white;
+            border: none;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .action-button:hover {
+            background: var(--color-accent);
+        }
+
+        .action-button.secondary {
+            background: white;
+            color: var(--color-text);
+            border: 2px solid var(--color-line);
+        }
+
+        .action-button.secondary:hover {
+            background: var(--color-text);
+            color: white;
+            border-color: var(--color-text);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .side-panel {
+                display: none;
+            }
+
+            .main-content {
+                box-shadow: none;
+            }
+
+            .header {
+                padding: 0.75rem 1rem;
+            }
+
+            .header-logo {
+                height: 45px;
+            }
+
+            .hamburger-menu {
+                right: 1rem;
+            }
+
+            .content-area {
+                padding: 2rem 1.5rem;
+            }
+
+            .page-title {
+                font-size: 1.75rem;
+            }
+
+            .bottom-actions {
+                flex-direction: column;
+            }
+
+            .action-button {
+                width: 100%;
+            }
+
+            .side-menu {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+
+     <!-- Side Menu -->
+    <div class="side-menu" id="sideMenu">
+        <div class="menu-header">
+            <h2 class="menu-title"></h2>
+            <button class="menu-close" id="menuClose">×</button>
+        </div>
+        <div class="menu-content">
+            <nav class="menu-nav">
+                <a href="index.html" class="menu-item">
+                    <div class="menu-item-icon"><img src="images/menu-item-icon.png" alt="home" width="40px" height="40px"></div>
+                    <div class="menu-item-text-zh">首頁</div>
+                    <div class="menu-item-text-en">Home</div>
+                </a>
+                <a href="about.html" class="menu-item">
+                    <div class="menu-item-icon"><img src="images/menu-item-icon1.png" alt="about" width="40px" height="40px"></div>
+                    <div class="menu-item-text-zh">關於我們</div>
+                    <div class="menu-item-text-en">About</div>
+                    
+                </a>
+                <a href="about.html" class="menu-item">
+                    <div class="menu-item-icon"><img src="images/menu-item-icon1.png" alt="about" width="40px" height="40px"></div>
+                    <div class="menu-item-text-zh">關於我們</div>
+                    <div class="menu-item-text-en">About</div>
+                    
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <div class="page-wrapper">
+        <!-- Left Side Panel -->
+        <div class="side-panel"></div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-logo" onclick="window.location.href='index.html'">
+                    <img src="images/logo.png" alt="瓢蟲·集">
+                </div>
+                <button class="hamburger-menu" id="hamburgerMenu">
+                    <div class="hamburger-line"></div>
+                    <div class="hamburger-line"></div>
+                    <div class="hamburger-line"></div>
+                </button>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <h1 class="page-title">怎麼保護瓢蟲？</h1>
+                <p class="page-subtitle">
+                    瓢蟲是不僅是農業的好幫手，更是環境健康的重要指標。<br>讓我們一起了解如何保護這些微小卻重要的生命。
+                </p>
+
+                <div class="steps-container">
+                    <!-- Step 1 -->
+                    <div class="step-item">
+                       
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">打造棲息地花園</h3>
+                        </div>
+                        <div class="step-content">
+                            <div class="step-box">
+                                <div class="step-box-title">【減少枯枝落葉的清理】</div>
+                                在公園或住家周圍，我們常把枯枝落葉掃得一乾二凈。但這些自然碎片其實是能讓瓢蟲度過寒冬的藏身之所。
+                            </div>
+                            <div class="step-box">
+                                <div class="step-box-title">【種植本土花卉與植物】</div>
+                                本地植物與本地昆蟲長期共同演化，形成了良好的和諧與多樣性，能提供瓢蟲熟悉的食物來源與適合的棲息環境。
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <!-- Step 1 -->
+                    <div class="step-item">
+                        
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">好好吃飯</h3>
+                        </div>
+                        <div class="step-content">
+                            <div class="step-box">
+                                <div class="step-box-title">【支持有機農產品】</div>
+                                認明有機標章（如CAS台灣有機農產品標章）可以確保農產品在生產、驗證及包裝上都符合規定，支持合法的有機驗證機制。
+                            </div>
+                            <div class="step-box">
+                                <div class="step-box-title">【食當地，食當季】</div>
+                                儘量購買在地且當季的蔬菜水果，不但新鮮、物美價廉且安全性高。 
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                    <!-- Step 1 -->
+                    <div class="step-item">
+                        
+                        <div class="step-header">
+                            <div class="step-number">3</div>
+                            <h3 class="step-title">認識瓢蟲</h3>
+                        </div>
+                        <div class="step-content">
+                            <div class="step-box">
+                                <div class="step-box-title">【避免誤殺幼蟲的可能】</div>
+                                瓢蟲的幼蟲階段，牠的顏色灰暗、身形細長，和長大後的模樣截然不同。不過，無論是幼蟲還是成蟲他們都會吃農田裡的害蟲，默默守護作物。
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 收尾區塊 -->
+                <div class="closing-block" id="closingBlock">
+                    <div class="closing-text">
+                        <div class="closing-quote">「加入保護瓢蟲的行列，<br>為瓢蟲多一份守護。」</div>
+                        <div class="closing-sub">守護瓢蟲的行動紀念</div>
+                    </div>
+                    <div class="bottom-actions">
+                        <a href="index.html" class="action-button">返回首頁</a>
+                        <a href="draw.html" class="action-button secondary">我要加入！</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side Panel -->
+        <div class="side-panel"></div>
+    </div>
+
+    <script>
+        // Intersection Observer - 圖片淡入
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target.querySelector('img');
+                    if (img && img.complete) {
+                        img.classList.add('loaded');
+                    }
+                    entry.target.classList.add('in-view');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.step-image-block').forEach(block => {
+            observer.observe(block);
+        });
+
+        // 收尾區塊淡入
+        const closingObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                    closingObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.2 });
+
+        const closingBlock = document.getElementById('closingBlock');
+        if (closingBlock) closingObserver.observe(closingBlock);
+        
+        // Hamburger Menu
+        const hamburgerMenu = document.getElementById('hamburgerMenu');
+        const sideMenu = document.getElementById('sideMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
+        const menuClose = document.getElementById('menuClose');
+
+        function openMenu() {
+            sideMenu.classList.add('active');
+            menuOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            sideMenu.classList.remove('active');
+            menuOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        hamburgerMenu.addEventListener('click', openMenu);
+        menuClose.addEventListener('click', closeMenu);
+        menuOverlay.addEventListener('click', closeMenu);
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeMenu();
+            }
+        });
+    </script>
+</body>
+</html>
