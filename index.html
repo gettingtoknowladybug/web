@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>瓢蟲・集 — Getting to Know Ladybug</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── Reset & Base ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #FFFFFF;
+      --ink: #000000;
+      --muted: #747474;
+      --max-w: 1920px;
+      --px: 80px;
+      --pt: 55px;
+      --nav-size: 20px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Avenir', 'Avenir Next', 'Nunito Sans', 'Noto Sans TC', sans-serif;
+      font-size: var(--nav-size);
+      overflow-x: hidden;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       HEADER / NAV
+    ══════════════════════════════════════════════════════════ */
+    header {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: var(--pt) var(--px) 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo a {
+      font-family: 'Avenir', 'Avenir Next', sans-serif;
+      font-size: var(--nav-size);
+      color: var(--ink);
+      text-decoration: none;
+      letter-spacing: 0.01em;
+      transition: color 0.2s;
+    }
+    .nav-logo a:hover { color: var(--muted); }
+
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: 'Avenir', 'Avenir Next', sans-serif;
+      font-size: var(--nav-size);
+      color: var(--ink);
+      text-decoration: none;
+      letter-spacing: 0.01em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover,
+    .nav-links a.active { color: var(--muted); }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      z-index: 200;
+    }
+    .hamburger span {
+      display: block;
+      width: 26px;
+      height: 2px;
+      background: var(--ink);
+      border-radius: 2px;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .mobile-drawer {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 150;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    .mobile-drawer.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .mobile-drawer a {
+      font-family: 'Avenir', 'Avenir Next', sans-serif;
+      font-size: 28px;
+      color: var(--ink);
+      text-decoration: none;
+      letter-spacing: 0.03em;
+      transition: color 0.2s;
+    }
+    .mobile-drawer a:hover { color: var(--muted); }
+
+    /* ══════════════════════════════════════════════════════════
+       HERO BANNER
+    ══════════════════════════════════════════════════════════ */
+    .hero {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .banner {
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+
+    .banner img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       MARQUEE
+    ══════════════════════════════════════════════════════════ */
+    .marquee-section {
+      max-width: 100%;
+      overflow: hidden;
+      padding: 20px 0 10px;
+      border-top: 1px solid transparent;
+      margin-top: 70px;
+      margin-bottom: 50px;
+    }
+
+    .marquee-track {
+      display: flex;
+      white-space: nowrap;
+      will-change: transform;
+    }
+
+    .marquee-track span {
+      display: inline-block;
+      padding-right: 300px;
+      font-family: 'Avenir', 'Avenir Next', sans-serif;
+      font-size: 115px;
+      font-weight: 400;
+      color: var(--ink);
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       SECTION 1 — ZOOM PARALLAX
+    ══════════════════════════════════════════════════════════ */
+    .section1 {
+      position: relative;
+      height: 350vh;
+      margin-top: 20px;
+    }
+
+    .stage {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      height: 100vh;
+      background: #fff;
+    }
+
+    .photo {
+      position: absolute;
+      overflow: hidden;
+      background: #c8c8c8;
+    }
+    .photo::after {
+      content: attr(data-n);
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Avenir', sans-serif;
+      font-size: 12px;
+      color: #fff;
+      letter-spacing: 0.05em;
+      pointer-events: none;
+    }
+    .photo:has(img)::after { display: none; }
+    .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    /*
+      P3 height: 26% → 28.5% (+20px at ~900px vh)
+      P3 bottom: 32 + 28.5 = 60.5%
+      P4 bottom aligns: top = 60.5 - 22 = 38.5%
+      P1 spans to P3 bottom: height = 60.5 - 8 = 52.5%
+      Row3 starts after 1.5% gap: top ≈ 62%
+    */
+    .p1 { left: 3%;    top: 8%;   width: 27%;   height: 52.5%; }
+    .p2 { left: 31.5%; top: 2%;   width: 41%;   height: 28%; }
+    .p3 { left: 31.5%; top: 32%;  width: 28%;   height: 28.5%; transform-origin: center center; z-index: 100; }
+    .p4 { left: 61%;   top: 38.5%;width: 36%;   height: 22%; }
+    .p5 { left: 3%;    top: 62.5%; width: 40%;   height: 32%; }
+    .p6 { left: 44.5%; top: 62.5%; width: 29%;   height: 32%; }
+    .p7 { left: 75%;   top: 62.5%; width: 22%;   height: 21%; }
+
+    /* ══════════════════════════════════════════════════════════
+       SECTION 2 — ABOUT US
+    ══════════════════════════════════════════════════════════ */
+    .section2 {
+      min-height: 100vh;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 150px 40px;
+    }
+
+    .section2-inner {
+      text-align: center;
+      max-width: 520px;
+    }
+
+    .about-title {
+      font-family: 'Avenir', 'Avenir Next', sans-serif;
+      font-size: 96px;
+      font-weight: 400;
+      color: #fff;
+      line-height: 1;
+      letter-spacing: -0.01em;
+      margin-bottom: 85px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0 0.28em;
+    }
+
+    .wt-word {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .wt-word.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .about-body {
+      font-family: 'Noto Sans TC', sans-serif;
+      font-size: 20px;
+      font-weight: 300;
+      color: #fff;
+      line-height: 2;
+      letter-spacing: 0.05em;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.9s ease 0.3s, transform 0.9s ease 0.3s;
+    }
+    .about-body.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════════════════════════ */
+    @media (max-width: 1024px) {
+      :root { --px: 50px; --pt: 44px; }
+      .marquee-track span { font-size: 72px; }
+    }
+
+    @media (max-width: 768px) {
+      :root { --px: 24px; --pt: 32px; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .mobile-drawer { display: flex; }
+      .marquee-track span { font-size: 52px; }
+
+      .section1 { height: 280vh; }
+      .p1 { left: 3%;  top: 2%;  width: 44%; height: 40%; }
+      .p2 { left: 50%; top: 2%;  width: 47%; height: 25%; }
+      .p3 { left: 3%;  top: 45%; width: 44%; height: 28%; }
+      .p4 { left: 50%; top: 30%; width: 47%; height: 26%; }
+      .p5 { left: 3%;  top: 76%; width: 44%; height: 22%; }
+      .p6 { left: 50%; top: 59%; width: 47%; height: 28%; }
+      .p7 { display: none; }
+
+      .about-title { font-size: 64px; margin-bottom: 60px; }
+      .about-body  { font-size: 17px; }
+
+      .player-wrap { width: min(80vw, 360px); }
+
+      .ladybug-title { font-size: 64px; margin-bottom: 60px; }
+      .ladybug-body  { font-size: 17px; }
+
+      .protect-title { font-size: 64px; margin-bottom: 60px; }
+      .protect-body  { font-size: 17px; }
+    }
+
+
+    /* ══════════════════════════════════════════════════════════
+       SECTION 4 — IMAGE PLAYER
+    ══════════════════════════════════════════════════════════ */
+    .section4 {
+      min-height: 100vh;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .player-wrap {
+      width: min(60vw, 560px);
+      aspect-ratio: 1 / 1;
+      position: relative;
+    }
+
+    .player-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      image-rendering: auto;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+
+    /* ══════════════════════════════════════════════════════════
+       SECTION 5 — LADYBUG
+    ══════════════════════════════════════════════════════════ */
+    .section5 {
+      min-height: 100vh;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 150px 40px;
+      margin-top: -200px;
+    }
+
+    .section5-inner {
+      text-align: center;
+      max-width: 520px;
+    }
+
+    .ladybug-title {
+      font-family: 'Avenir', 'Avenir Next', sans-serif;
+      font-size: 96px;
+      font-weight: 400;
+      color: #000;
+      line-height: 1;
+      letter-spacing: -0.01em;
+      margin-bottom: 85px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0 0.28em;
+    }
+
+    .ladybug-body {
+      font-family: 'Noto Sans TC', sans-serif;
+      font-size: 20px;
+      font-weight: 300;
+      color: #000;
+      line-height: 2;
+      letter-spacing: 0.05em;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.9s ease 0.3s, transform 0.9s ease 0.3s;
+    }
+    .ladybug-body.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 480px) {
+      .marquee-track span { font-size: 36px; }
+
+      .section1 { height: 250vh; }
+      .p1 { left: 3%; top: 2%;  width: 94%; height: 22%; }
+      .p2 { left: 3%; top: 26%; width: 58%; height: 19%; }
+      .p3 { left: 3%; top: 47%; width: 46%; height: 18%; }
+      .p4 { left: 51%; top: 47%; width: 46%; height: 16%; }
+      .p5 { left: 3%; top: 67%; width: 94%; height: 19%; }
+      .p6 { left: 3%; top: 88%; width: 58%; height: 10%; }
+      .p7 { display: none; }
+
+      .about-title { font-size: 48px; margin-bottom: 48px; }
+      .section2    { padding: 80px 28px; }
+
+      .player-wrap { width: 88vw; }
+
+      .ladybug-title { font-size: 48px; margin-bottom: 48px; }
+      .section5      { padding: 80px 28px; }
+
+      .protect-title { font-size: 48px; margin-bottom: 48px; }
+      .section7      { padding: 80px 28px; }
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       SECTION 6 — SCROLL PHOTO FADE
+    ══════════════════════════════════════════════════════════ */
+    .section6 {
+      position: relative;
+      height: 300vh;
+    }
+
+    .s6-stage {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .s6-slide {
+      position: relative;
+      width: 100%;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .s6-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      filter: brightness(0.25);
+      transition: filter 0.6s ease;
+    }
+
+    .s6-slide .s6-placeholder {
+      width: 100%;
+      height: 100%;
+      background: #222;
+      filter: brightness(0.25);
+      transition: filter 0.6s ease;
+    }
+
+    .s6-caption {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      pointer-events: none;
+    }
+
+    .s6-caption .zh {
+      font-family: 'Noto Sans TC', sans-serif;
+      font-size: 20px;
+      font-weight: 300;
+      color: #fff;
+      letter-spacing: 0.1em;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .s6-caption .en {
+      font-family: 'Avenir', 'Avenir Next', sans-serif;
+      font-size: 20px;
+      font-weight: 400;
+      color: #fff;
+      letter-spacing: 0.05em;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.6s ease 0.1s, transform 0.6s ease 0.1s;
+    }
+
+    .s6-slide.active img,
+    .s6-slide.active .s6-placeholder { filter: brightness(1); }
+
+    .s6-slide.active .s6-caption .zh,
+    .s6-slide.active .s6-caption .en {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      .s6-caption .zh,
+      .s6-caption .en { font-size: 16px; }
+    }
+
+
+    /* ══════════════════════════════════════════════════════════
+       SECTION 7 — PROTECT
+    ══════════════════════════════════════════════════════════ */
+    .section7 {
+      min-height: 100vh;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 150px 40px;
+    }
+
+    .section7-inner {
+      text-align: center;
+      max-width: 520px;
+    }
+
+    .protect-title {
+      font-family: 'Avenir', 'Avenir Next', sans-serif;
+      font-size: 96px;
+      font-weight: 400;
+      color: #000;
+      line-height: 1;
+      letter-spacing: -0.01em;
+      margin-bottom: 85px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0 0.28em;
+    }
+
+    .protect-body {
+      font-family: 'Noto Sans TC', sans-serif;
+      font-size: 20px;
+      font-weight: 300;
+      color: #000;
+      line-height: 2;
+      letter-spacing: 0.05em;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.9s ease 0.3s, transform 0.9s ease 0.3s;
+    }
+    .protect-body.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+
+    /* ══════════════════════════════════════════════════════════
+       SECTION 8 — CTA
+    ══════════════════════════════════════════════════════════ */
+    .section8 {
+      min-height: 100vh;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 40px;
+    }
+
+    .s8-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 32px;
+    }
+
+    .s8-body {
+      font-family: 'Noto Sans TC', sans-serif;
+      font-size: 20px;
+      font-weight: 300;
+      color: #fff;
+      line-height: 1.9;
+      letter-spacing: 0.05em;
+    }
+
+    .s8-body .wt-word {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .s8-body .wt-word.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .s8-cta {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .s8-arrow {
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      width: 0;
+      transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .s8-arrow svg {
+      flex-shrink: 0;
+      width: 60px;
+      height: 20px;
+    }
+
+    .s8-cta-label {
+      font-family: 'Noto Sans TC', sans-serif;
+      font-size: 20px;
+      font-weight: 300;
+      color: #fff;
+      letter-spacing: 0.1em;
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+      white-space: nowrap;
+    }
+
+    .s8-cta.active .s8-arrow { width: 60px; }
+    .s8-cta.active .s8-cta-label { opacity: 1; transform: translateX(0); }
+
+    .s8-cta:hover .s8-arrow {
+      transform: translateX(6px);
+      transition: width 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.3s ease;
+    }
+    .s8-cta:hover .s8-cta-label { opacity: 0.75; }
+
+    @media (max-width: 480px) {
+      .section8     { padding: 60px 28px; }
+      .s8-body      { font-size: 17px; }
+      .s8-cta-label { font-size: 17px; }
+    }
+
+    
+    /* ── Contact title ── */
+    .contact-title {
+      font-family: 'Avenir', 'Avenir Next', sans-serif;
+      font-size: 96px;
+      font-weight: 400;
+      color: #000;
+      line-height: 1;
+      letter-spacing: -0.01em;
+      margin-bottom: 72px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 0.28em;
+    }
+
+    .contact-title .wt-word {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .contact-title .wt-word.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Two-column grid ── */
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 40px;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: 0;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.8s ease 0.3s, transform 0.8s ease 0.3s;
+    }
+    .footer-grid.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Column ── */
+  
+
+    .footer-col-label {
+      font-family: 'Avenir', 'Avenir Next', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      color: #000;
+      font-style: italic;
+      letter-spacing: 0.03em;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #000;
+      margin-bottom: 24px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* Social links */
+    .footer-col.social li a {
+      font-family: 'Avenir', 'Avenir Next', sans-serif;
+      font-size: 20px;
+      font-weight: 400;
+      color: #000;
+      text-decoration: none;
+      letter-spacing: 0.01em;
+      transition: opacity 0.2s;
+    }
+    .footer-col.social li a:hover { opacity: 0.5; }
+
+    /* Team rows */
+    .team-row {
+      display: flex;
+      align-items: baseline;
+      gap: 24px;
+    }
+
+    .team-name {
+      font-family: 'Avenir', 'Avenir Next', sans-serif;
+      font-size: 20px;
+      font-weight: 400;
+      color: #000;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+      min-width: 160px;
+    }
+
+    .team-email a {
+      font-family: 'Avenir', 'Avenir Next', sans-serif;
+      font-size: 12px;
+      font-weight: 400;
+      color: #000;
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    .team-email a:hover { opacity: 0.5 !important; }
+    .team-email.visible a { opacity: 1; }
+
+    /* ── RWD ── */
+    @media (max-width: 1024px) {
+      .section9 { padding: 60px 50px 48px; }
+      .contact-title { font-size: 72px; }
+    }
+
+    @media (max-width: 768px) {
+      .section9 { padding: 60px 24px 48px; }
+      .contact-title { font-size: 56px; margin-bottom: 48px; }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 48px 0;
+        max-width: 100%;
+        margin-left: 0;
+      }
+
+      .team-name { min-width: 130px; }
+    }
+
+    @media (max-width: 480px) {
+      .contact-title { font-size: 44px; }
+      .footer-col.social li a,
+      .team-name { font-size: 17px; }
+    }
+
+    
+
+    /* ══════════════════════════════════════════════════════════
+       SECTION 9 — FOOTER
+    ══════════════════════════════════════════════════════════ */
+    .section9 {
+      background: #fff;
+      padding: 120px 60px;
+    }
+    .contact-title {
+      font-family: 'Avenir', 'Avenir Next', sans-serif;
+      font-size: 96px;
+      font-weight: 400;
+      color: #000;
+      line-height: 1;
+      letter-spacing: -0.01em;
+      margin-bottom: 72px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 0.28em;
+    }
+    .contact-title .wt-word {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .contact-title .wt-word.visible { opacity: 1; transform: translateY(0); }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 40px;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: 0;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.8s ease 0.3s, transform 0.8s ease 0.3s;
+    }
+    .footer-grid.visible { opacity: 1; transform: translateY(0); }
+    .footer-col-label {
+      font-family: 'Avenir', 'Avenir Next', sans-serif;
+      font-size: 14px; font-weight: 400; color: #000;
+      font-style: italic; letter-spacing: 0.03em;
+      padding-bottom: 10px; border-bottom: 1px solid #000; margin-bottom: 24px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+    .footer-col.social li a {
+      font-family: 'Avenir', 'Avenir Next', sans-serif;
+      font-size: 20px; font-weight: 400; color: #000;
+      text-decoration: none; letter-spacing: 0.01em; transition: opacity 0.2s;
+    }
+    .footer-col.social li a:hover { opacity: 0.5; }
+    .team-row { display: flex; align-items: baseline; gap: 24px; }
+    .team-name {
+      font-family: 'Avenir', 'Avenir Next', sans-serif;
+      font-size: 20px; font-weight: 400; color: #000;
+      letter-spacing: 0.01em; white-space: nowrap; min-width: 160px;
+    }
+    .team-email a {
+      font-family: 'Avenir', 'Avenir Next', sans-serif;
+      font-size: 12px; font-weight: 400; color: #000;
+      text-decoration: none; letter-spacing: 0.02em;
+      opacity: 0; transition: opacity 0.6s ease;
+    }
+    .team-email a:hover { opacity: 0.5 !important; }
+    .team-email.visible a { opacity: 1; }
+    @media (max-width: 1024px) {
+      .section9 { padding: 60px 50px 48px; }
+      .contact-title { font-size: 72px; }
+    }
+    @media (max-width: 768px) {
+      .section9 { padding: 60px 24px 48px; }
+      .contact-title { font-size: 56px; margin-bottom: 48px; }
+      .footer-grid { grid-template-columns: 1fr; gap: 48px 0; max-width: 100%; margin-left: 0; }
+      .team-name { min-width: 130px; }
+    }
+    @media (max-width: 480px) {
+      .contact-title { font-size: 44px; }
+      .footer-col.social li a, .team-name { font-size: 17px; }
+    }
+  </style>
+</head>
+
+  <script>
+    document.addEventListener('contextmenu', e => e.preventDefault());
+  </script>
+  
+<body>
+
+  <!-- ═══════════ MOBILE DRAWER ═══════════ -->
+  <nav class="mobile-drawer" id="drawer" role="navigation" aria-label="行動選單">
+    <a href="#hero" onclick="closeDrawer()">home</a>
+    <a href="#section1" onclick="closeDrawer()">about us</a>
+    <a href="#section4" onclick="closeDrawer()">ladybug</a>
+    <a href="#section6" onclick="closeDrawer()">protect</a>
+    <a href="#section9" onclick="closeDrawer()">contact</a>
+  </nav>
+
+  <!-- ═══════════ HEADER ═══════════ -->
+  <header>
+    <div class="nav-logo">
+      <a href="#hero" class="active">home</a>
+    </div>
+    <ul class="nav-links" role="navigation" aria-label="主導覽">
+      <li><a href="#section1">about us</a></li>
+      <li><a href="#section4">ladybug</a></li>
+      <li><a href="#section6">protect</a></li>
+      <li><a href="#section9">contact</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="開啟選單" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <!-- ═══════════ HERO BANNER ═══════════ -->
+  <div class="hero">
+    <div class="banner" id="banner">
+      <img src="image/banner.jpg" alt="瓢蟲圖鑑" />
+    </div>
+  </div>
+
+  <!-- ═══════════ MARQUEE ═══════════ -->
+  <div class="marquee-section" aria-hidden="true">
+    <div class="marquee-track" id="marqueeTrack">
+      <span>getting to know LADYBUG&nbsp;&nbsp;</span>
+      <span>getting to know LADYBUG&nbsp;&nbsp;</span>
+      <span>getting to know LADYBUG&nbsp;&nbsp;</span>
+      <span>getting to know LADYBUG&nbsp;&nbsp;</span>
+    </div>
+  </div>
+
+  <!-- ═══════════ SECTION 1 — ZOOM PARALLAX ═══════════ -->
+  <section class="section1" id="section1">
+    <div class="stage" id="stage">
+      <div class="photo p1" data-n="photo 01"><img src="image/photo1.jpg" alt="" /></div>
+      <div class="photo p2" data-n="photo 02"><img src="image/photo2.jpg" alt="" /></div>
+      <div class="photo p3" id="p3" data-n="photo 03 · zoom"><img src="image/photo3.jpg" alt="" /></div>
+      <div class="photo p4" data-n="photo 04"><img src="image/photo4.jpg" alt="" /></div>
+      <div class="photo p5" data-n="photo 05"><img src="image/photo5.jpg" alt="" /></div>
+      <div class="photo p6" data-n="photo 06"><img src="image/photo6.jpg" alt="" /></div>
+      <div class="photo p7" data-n="photo 07"><img src="image/photo7.jpg" alt="" /></div>
+    </div>
+  </section>
+
+  <!-- ═══════════ SECTION 2 — ABOUT US ═══════════ -->
+  <section class="section2" id="section2">
+    <div class="section2-inner">
+      <h2 class="about-title" id="aboutTitle">about us</h2>
+      <p class="about-body" id="aboutBody">瓢蟲．集藉由多元的設計載體，傳遞其基本知識、生態價值與保育觀念。　引導大眾重新認識瓢蟲，感受其斑紋之美並提升對小小瓢蟲的關注與重視。</p>
+    </div>
+  </section>
+
+
+  <!-- ═══════════ SECTION 4 — IMAGE PLAYER ═══════════ -->
+  <section class="section4" id="section4">
+    <div class="player-wrap">
+      <img id="ladybugPlayer" src="image/ladybug/frame_01.png" alt="瓢蟲逐幀" draggable="false" />
+    </div>
+  </section>
+
+  <!-- ═══════════ SECTION 5 — LADYBUG ═══════════ -->
+  <section class="section5" id="section5">
+    <div class="section5-inner">
+      <h2 class="ladybug-title" id="ladybugTitle">ladybug</h2>
+      <p class="ladybug-body" id="ladybugBody">你印象中的瓢蟲是什麼樣子？<br>在台灣，有許多的特有種瓢蟲，牠們的樣貌遠比你想像的豐富。除了常見的紅、黃與黑，還有咖啡色、橘色等各式各樣的種類。</p>
+    </div>
+  </section>
+
+  <!-- ═══════════ SECTION 6 — SCROLL PHOTO FADE ═══════════ -->
+  <section class="section6" id="section6">
+    <div class="s6-stage" id="s6Stage">
+
+      <!-- Slide 1 -->
+      <div class="s6-slide" id="s6Slide1">
+        <img src="image/slide1.jpg" alt="保護環境" />
+        <div class="s6-caption">
+          <span class="zh">保護環境</span>
+          <span class="en">Protect the Environment</span>
+        </div>
+      </div>
+
+      <!-- Slide 2 -->
+      <div class="s6-slide" id="s6Slide2">
+        <img src="image/slide2.jpg" alt="好好吃飯" />
+        <div class="s6-caption">
+          <span class="zh">好好吃飯</span>
+          <span class="en">Eat well</span>
+        </div>
+      </div>
+
+      <!-- Slide 3 -->
+      <div class="s6-slide" id="s6Slide3">
+        <img src="image/slide3.jpg" alt="認識瓢蟲" />
+        <div class="s6-caption">
+          <span class="zh">認識瓢蟲</span>
+          <span class="en">getting to know ladybugs</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════ SECTION 7 — PROTECT ═══════════ -->
+  <section class="section7" id="section7">
+    <div class="section7-inner">
+      <h2 class="protect-title" id="protectTitle">protect</h2>
+      <p class="protect-body" id="protectBody">瓢蟲是保護農作物的重要角色。在日常生活中，我們可以盡自己的力量去幫助這些小生命，讓生態環境更美好，人類也能吃得更健康。</p>
+    </div>
+  </section>
+
+  <!-- ═══════════ SECTION 8 — CTA ═══════════ -->
+  <section class="section8" id="section8">
+    <div class="s8-inner">
+      <p class="s8-body" id="s8Body">每一份微小的關注，<br>都是守護生態的巨大力量。</p>
+      <a class="s8-cta" id="s8Cta" href="support.html">
+        <span class="s8-arrow">
+          <svg viewBox="0 0 60 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="0" y1="10" x2="52" y2="10" stroke="white" stroke-width="1.5"/>
+            <polyline points="43,2 52,10 43,18" stroke="white" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="s8-cta-label">我要支持！</span>
+      </a>
+    </div>
+  </section> 
+
+  <script>
+
+  /* ════════════════════════════════════════════════════
+     TEXT MARQUEE
+  ════════════════════════════════════════════════════ */
+  (function initMarquee() {
+    const track = document.getElementById('marqueeTrack');
+    if (!track) return;
+
+    const baseVelocity    = 0.7;
+    const scrollInfluence = 0.06;
+    const springFactor    = 0.08;
+    let baseX = 0, scrollVel = 0, smoothVel = 0;
+    let lastScrollY = window.scrollY;
+
+    function getSpanWidth() {
+      const span = track.querySelector('span');
+      return span ? span.offsetWidth : 400;
+    }
+
+    function tick() {
+      const cur = window.scrollY;
+      scrollVel   = (cur - lastScrollY) * scrollInfluence;
+      lastScrollY = cur;
+      smoothVel  += (scrollVel - smoothVel) * springFactor;
+      baseX      -= (baseVelocity + smoothVel);
+      const spanW = getSpanWidth();
+      if (Math.abs(baseX) >= spanW) baseX = baseX % spanW;
+      track.style.transform = `translateX(${baseX.toFixed(2)}px)`;
+      requestAnimationFrame(tick);
+    }
+
+    requestAnimationFrame(tick);
+  })();
+
+
+  /* ════════════════════════════════════════════════════
+     ZOOM PARALLAX — P3
+  ════════════════════════════════════════════════════ */
+  (function initZoomParallax() {
+    const section = document.getElementById('section1');
+    const p3      = document.getElementById('p3');
+    const others  = document.querySelectorAll('.photo:not(#p3)');
+    if (!section || !p3) return;
+
+    const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+    const lerp  = (a, b, t)   => a + (b - a) * t;
+    let init = null;
+
+    function cacheInit() {
+      p3.style.cssText = 'transform-origin: center center; z-index: 100;';
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      // P3 CSS: left 31.5%, width 28%   → cx = (31.5 + 14)%   = 45.5% vw
+      // P3 CSS: top  32%,   height 28.5% → cy = (32 + 14.25)%  = 46.25% vh
+      init = {
+        cx: vw * 0.455,
+        cy: vh * 0.4625,
+        w:  vw * 0.28,
+        h:  vh * 0.285,
+      };
+    }
+
+    function getProgress() {
+      const scrolled = -section.getBoundingClientRect().top;
+      const total    = section.offsetHeight - window.innerHeight;
+      return clamp(scrolled / total, 0, 1);
+    }
+
+    function update() {
+      if (!init) cacheInit();
+      const raw      = getProgress();
+      const vw       = window.innerWidth;
+      const vh       = window.innerHeight;
+      const vpCx     = vw / 2;
+      const vpCy     = vh / 2;
+      const maxScale = Math.max(vw / init.w, vh / init.h) * 1.005;
+
+      // Power curve: raw^0.55 makes zoom kick in faster / feel larger
+      const t  = Math.pow(raw, 0.55);
+      const tx = (vpCx - init.cx) * t;
+      const ty = (vpCy - init.cy) * t;
+      const sc = lerp(1, maxScale, t);
+
+      // Always keep position:absolute inside stage — never fixed.
+      // When section1 finishes scrolling the sticky stage scrolls away
+      // naturally, so p3 never bleeds into section2.
+      p3.style.cssText = `
+        position: absolute;
+        transform-origin: center center;
+        z-index: 100;
+        overflow: hidden;
+        background: #c8c8c8;
+        transform: translate(${tx.toFixed(2)}px, ${ty.toFixed(2)}px) scale(${sc.toFixed(5)});
+      `;
+
+      const fade   = clamp(1 - (raw - 0.2) / 0.4, 0, 1);
+      const shrink = lerp(1, 0.93, raw);
+      others.forEach(el => {
+        el.style.opacity   = fade.toFixed(4);
+        el.style.transform = `scale(${shrink.toFixed(4)})`;
+      });
+    }
+
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', () => { init = null; update(); }, { passive: true });
+    requestAnimationFrame(() => { cacheInit(); update(); });
+  })();
+
+
+  /* ════════════════════════════════════════════════════
+     WHISPER TEXT — about title (replays every entry)
+  ════════════════════════════════════════════════════ */
+  (function initWhisperText() {
+    const titleEl = document.getElementById('aboutTitle');
+    if (!titleEl) return;
+
+    const words = titleEl.textContent.trim().split(/\s+/);
+    titleEl.textContent = '';
+
+    const spans = words.map((word, i) => {
+      const span = document.createElement('span');
+      span.className = 'wt-word';
+      span.textContent = word;
+      span.style.transitionDelay = `${i * 0.12}s`;
+      titleEl.appendChild(span);
+      return span;
+    });
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          // Disable transitions, reset to hidden
+          spans.forEach(s => {
+            s.style.transition = 'none';
+            s.classList.remove('visible');
+          });
+          // Force reflow so browser registers the reset
+          titleEl.offsetHeight; // eslint-disable-line no-unused-expressions
+          // Re-enable transitions and play
+          setTimeout(() => {
+            spans.forEach(s => { s.style.transition = ''; });
+            spans.forEach(s => s.classList.add('visible'));
+          }, 20);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    observer.observe(titleEl);
+  })();
+
+
+  /* ════════════════════════════════════════════════════
+     FADE IN — about body (replays every entry)
+  ════════════════════════════════════════════════════ */
+  (function initFadeBody() {
+    const bodyEl = document.getElementById('aboutBody');
+    if (!bodyEl) return;
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          bodyEl.style.transition = 'none';
+          bodyEl.classList.remove('visible');
+          bodyEl.offsetHeight;
+          setTimeout(() => {
+            bodyEl.style.transition = '';
+            bodyEl.classList.add('visible');
+          }, 20);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    observer.observe(bodyEl);
+  })();
+
+
+
+  /* ════════════════════════════════════════════════════
+     IMAGE PLAYER
+  ════════════════════════════════════════════════════ */
+  (function initImagePlayer() {
+    const img     = document.getElementById('ladybugPlayer');
+    const section = document.getElementById('section4');
+    if (!img || !section) return;
+
+    const TOTAL     = 32;
+    const INTERVAL  = 130;
+    const BASE_PATH = 'image/ladybug/';
+    const PREFIX    = 'frame_';
+    const EXT       = '.png';
+
+    const frames = [];
+    for (let i = 1; i <= TOTAL; i++) {
+      const n  = String(i).padStart(2, '0');
+      const src = BASE_PATH + PREFIX + n + EXT;
+      const el = new Image();
+      el.src   = src;
+      frames.push(src);
+    }
+
+    let current = 0;
+    let timer   = null;
+
+    function play() {
+      if (timer) return;
+      timer = setInterval(() => {
+        current = (current + 1) % TOTAL;
+        img.src = frames[current];
+      }, INTERVAL);
+    }
+
+    function pause() {
+      clearInterval(timer);
+      timer = null;
+    }
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => e.isIntersecting ? play() : pause());
+    }, { threshold: 0.3 });
+
+    observer.observe(section);
+  })();
+
+
+  /* ════════════════════════════════════════════════════
+     WHISPER TEXT — ladybug title (replays every entry)
+  ════════════════════════════════════════════════════ */
+  (function initWhisperLadybug() {
+    const titleEl = document.getElementById('ladybugTitle');
+    if (!titleEl) return;
+
+    const words = titleEl.textContent.trim().split(/\s+/);
+    titleEl.textContent = '';
+
+    const spans = words.map((word, i) => {
+      const span = document.createElement('span');
+      span.className = 'wt-word';
+      span.textContent = word;
+      span.style.transitionDelay = `${i * 0.12}s`;
+      titleEl.appendChild(span);
+      return span;
+    });
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          spans.forEach(s => { s.style.transition = 'none'; s.classList.remove('visible'); });
+          titleEl.offsetHeight;
+          setTimeout(() => {
+            spans.forEach(s => { s.style.transition = ''; });
+            spans.forEach(s => s.classList.add('visible'));
+          }, 20);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    observer.observe(titleEl);
+  })();
+
+
+  /* ════════════════════════════════════════════════════
+     FADE IN — ladybug body (replays every entry)
+  ════════════════════════════════════════════════════ */
+  (function initFadeLadybug() {
+    const bodyEl = document.getElementById('ladybugBody');
+    if (!bodyEl) return;
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          bodyEl.style.transition = 'none';
+          bodyEl.classList.remove('visible');
+          bodyEl.offsetHeight;
+          setTimeout(() => {
+            bodyEl.style.transition = '';
+            bodyEl.classList.add('visible');
+          }, 20);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    observer.observe(bodyEl);
+  })();
+
+
+  /* ════════════════════════════════════════════════════
+     SECTION 6 — THREE-STAGE SCROLL FADE
+  ════════════════════════════════════════════════════ */
+  (function initS6() {
+    const section = document.getElementById('section6');
+    const slides  = [
+      document.getElementById('s6Slide1'),
+      document.getElementById('s6Slide2'),
+      document.getElementById('s6Slide3'),
+    ];
+    if (!section || slides.some(s => !s)) return;
+
+    const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+
+    function update() {
+      const scrolled = -section.getBoundingClientRect().top;
+      const total    = section.offsetHeight - window.innerHeight;
+      const progress = clamp(scrolled / total, 0, 1);
+
+      slides.forEach((slide, i) => {
+        const threshold = i / slides.length;
+        if (progress >= threshold) slide.classList.add('active');
+      });
+    }
+
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+  })();
+
+
+  /* ════════════════════════════════════════════════════
+     WHISPER TEXT — protect title (replays every entry)
+  ════════════════════════════════════════════════════ */
+  (function initWhisperProtect() {
+    const titleEl = document.getElementById('protectTitle');
+    if (!titleEl) return;
+
+    const words = titleEl.textContent.trim().split(/\s+/);
+    titleEl.textContent = '';
+
+    const spans = words.map((word, i) => {
+      const span = document.createElement('span');
+      span.className = 'wt-word';
+      span.textContent = word;
+      span.style.transitionDelay = `${i * 0.12}s`;
+      titleEl.appendChild(span);
+      return span;
+    });
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          spans.forEach(s => { s.style.transition = 'none'; s.classList.remove('visible'); });
+          titleEl.offsetHeight;
+          setTimeout(() => {
+            spans.forEach(s => { s.style.transition = ''; });
+            spans.forEach(s => s.classList.add('visible'));
+          }, 20);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    observer.observe(titleEl);
+  })();
+
+
+  /* ════════════════════════════════════════════════════
+     FADE IN — protect body (replays every entry)
+  ════════════════════════════════════════════════════ */
+  (function initFadeProtect() {
+    const bodyEl = document.getElementById('protectBody');
+    if (!bodyEl) return;
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          bodyEl.style.transition = 'none';
+          bodyEl.classList.remove('visible');
+          bodyEl.offsetHeight;
+          setTimeout(() => {
+            bodyEl.style.transition = '';
+            bodyEl.classList.add('visible');
+          }, 20);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    observer.observe(bodyEl);
+  })();
+
+
+  /* ════════════════════════════════════════════════════
+     SECTION 8 — WHISPERTEXT + ARROW CTA
+  ════════════════════════════════════════════════════ */
+  (function initS8() {
+    const section = document.getElementById('section8');
+    const bodyEl  = document.getElementById('s8Body');
+    const cta     = document.getElementById('s8Cta');
+    if (!section || !bodyEl || !cta) return;
+
+    const rawHTML = bodyEl.innerHTML;
+    const lines   = rawHTML.split(/<br\s*\/?>/i);
+    bodyEl.innerHTML = '';
+
+    const spans = [];
+    let delay = 0;
+
+    lines.forEach((line, li) => {
+      const words = line.trim().split(/(\s+)/);
+      words.forEach(token => {
+        if (/^\s+$/.test(token)) {
+          bodyEl.appendChild(document.createTextNode(token));
+        } else if (token) {
+          const span = document.createElement('span');
+          span.className = 'wt-word';
+          span.textContent = token;
+          span.style.transitionDelay = `${delay.toFixed(2)}s`;
+          bodyEl.appendChild(span);
+          spans.push(span);
+          delay += 0.07;
+        }
+      });
+      if (li < lines.length - 1) bodyEl.appendChild(document.createElement('br'));
+    });
+
+    const bodyDuration = delay + 0.5;
+
+    function play() {
+      spans.forEach(s => { s.style.transition = 'none'; s.classList.remove('visible'); });
+      cta.classList.remove('active');
+      const label = cta.querySelector('.s8-cta-label');
+      label.style.transition = 'none';
+      label.style.opacity = '0';
+      bodyEl.offsetHeight;
+      setTimeout(() => {
+        spans.forEach(s => { s.style.transition = ''; });
+        spans.forEach(s => s.classList.add('visible'));
+      }, 20);
+      setTimeout(() => {
+  label.style.transition = '';
+  label.style.opacity = '';   // ← 加這一行
+  cta.classList.add('active');
+}, bodyDuration * 1000);
+    }
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) play(); });
+    }, { threshold: 0.3 });
+
+    observer.observe(section);
+  })();
+
+  
+
+
+  /* ════════════════════════════════════════════════════
+     HAMBURGER & MOBILE DRAWER
+  ════════════════════════════════════════════════════ */
+  const hamburger = document.getElementById('hamburger');
+  const drawer    = document.getElementById('drawer');
+  let drawerOpen  = false;
+
+  function openDrawer() {
+    drawerOpen = true;
+    hamburger.classList.add('open');
+    drawer.classList.add('open');
+    hamburger.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDrawer() {
+    drawerOpen = false;
+    hamburger.classList.remove('open');
+    drawer.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+
+  hamburger.addEventListener('click', () => {
+    drawerOpen ? closeDrawer() : openDrawer();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && drawerOpen) closeDrawer();
+  });
+
+  </script>
+
+  <script>
+  
+  </script>
+
+
+  <!-- ═══════════ SECTION 9 — FOOTER ═══════════ -->
+  <footer class="section9" id="section9">
+    <h2 class="contact-title" id="contactTitle">contact</h2>
+    <div class="footer-grid" id="footerGrid">
+      <div class="footer-col social">
+        <div class="footer-col-label">social media</div>
+        <ul>
+          <li><a href="https://www.instagram.com" target="_blank" rel="noopener">instagram</a></li>
+          <li><a href="" target="_blank" rel="noopener"></a></li>
+        </ul>
+      </div>
+      <div class="footer-col team">
+        <div class="footer-col-label">team</div>
+        <ul>
+          <li class="team-row">
+            <span class="team-name">huang, yu-chi</span>
+            <span class="team-email" id="email1"><a href="mailto:lovespring031187.tp@gmail.com">lovespring031187.tp@gmail.com</a></span>
+          </li>
+          <li class="team-row">
+            <span class="team-name">han, yung-ting</span>
+            <span class="team-email" id="email2"><a href="mailto:mavisf0309@gmail.com">mavisf0309@gmail.com</a></span>
+          </li>
+          <li class="team-row">
+            <span class="team-name">chang, chih-hsin</span>
+            <span class="team-email" id="email3"><a href="mailto:rinnieforseniors@gmail.com">rinnieforseniors@gmail.com</a></span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  /* ════════════════════════════════════════════════════
+     SECTION 9 — FOOTER ANIMATIONS
+  ════════════════════════════════════════════════════ */
+  (function initS9() {
+    const footer   = document.getElementById('section9');
+    const titleEl  = document.getElementById('contactTitle');
+    const grid     = document.getElementById('footerGrid');
+    const emailEls = ['email1','email2','email3'].map(id => document.getElementById(id));
+    if (!footer || !titleEl || !grid) return;
+
+    const words = titleEl.textContent.trim().split(/\s+/);
+    titleEl.textContent = '';
+    const spans = words.map((w, i) => {
+      const span = document.createElement('span');
+      span.className = 'wt-word';
+      span.textContent = w;
+      span.style.transitionDelay = `${i * 0.12}s`;
+      titleEl.appendChild(span);
+      return span;
+    });
+
+    function playTitle() {
+      spans.forEach(s => { s.style.transition = 'none'; s.classList.remove('visible'); });
+      titleEl.offsetHeight;
+      setTimeout(() => {
+        spans.forEach(s => { s.style.transition = ''; });
+        spans.forEach(s => s.classList.add('visible'));
+      }, 20);
+    }
+
+    function playGrid() {
+      grid.style.transition = 'none';
+      grid.classList.remove('visible');
+      emailEls.forEach(el => { if (el) { el.style.transition = 'none'; el.classList.remove('visible'); } });
+      grid.offsetHeight;
+      setTimeout(() => { grid.style.transition = ''; grid.classList.add('visible'); }, 20);
+      emailEls.forEach((el, i) => {
+        if (!el) return;
+        setTimeout(() => { el.style.transition = ''; el.classList.add('visible'); }, 800 + i * 150);
+      });
+    }
+
+    const titleObs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) playTitle(); });
+    }, { threshold: 0.2 });
+
+    const gridObs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) playGrid(); });
+    }, { threshold: 0.2 });
+
+    titleObs.observe(titleEl);
+    gridObs.observe(grid);
+  })();
+  </script>
+
+</body>
+</html>
