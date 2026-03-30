@@ -657,10 +657,13 @@
       justify-content: center;
     }
     .ref-overlay.visible { opacity: 1; }
-    .ref-overlay svg {
-      width: 55%;
-      height: 55%;
-    }
+    .ref-overlay img {
+  width: 400px;
+  height: 400px;
+  object-fit: contain;
+  opacity: 0.22;
+  pointer-events: none;
+}
 
     /* ref button — slightly different label style */
     .tool-button--ref {
@@ -1134,36 +1137,7 @@
         <canvas id="drawCanvas" width="800" height="800"></canvas>
         <!-- 參考圖：半透明瓢蟲輪廓，不影響畫布儲存 -->
         <div class="ref-overlay" id="refOverlay">
-          <svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg"
-               fill="none" stroke="rgba(0,0,0,0.22)" stroke-width="2.5"
-               stroke-linecap="round" stroke-linejoin="round">
-            <!-- 頭部 -->
-            <ellipse cx="100" cy="52" rx="28" ry="24"/>
-            <!-- 觸角 left -->
-            <path d="M82 34 Q68 14 58 8"/>
-            <circle cx="58" cy="8" r="3" fill="rgba(0,0,0,0.2)" stroke="none"/>
-            <!-- 觸角 right -->
-            <path d="M118 34 Q132 14 142 8"/>
-            <circle cx="142" cy="8" r="3" fill="rgba(0,0,0,0.2)" stroke="none"/>
-            <!-- 翅膀（整體輪廓） -->
-            <ellipse cx="100" cy="140" rx="72" ry="78"/>
-            <!-- 頸部連接 -->
-            <path d="M78 72 Q72 84 72 100"/>
-            <path d="M122 72 Q128 84 128 100"/>
-            <!-- 中央分隔線 -->
-            <line x1="100" y1="72" x2="100" y2="210"/>
-            <!-- 左翼斑點 -->
-            <circle cx="76" cy="108" r="10"/>
-            <circle cx="70" cy="140" r="9"/>
-            <circle cx="80" cy="170" r="8"/>
-            <!-- 右翼斑點 -->
-            <circle cx="124" cy="108" r="10"/>
-            <circle cx="130" cy="140" r="9"/>
-            <circle cx="120" cy="170" r="8"/>
-            <!-- 眼睛 -->
-            <circle cx="90"  cy="50" r="5" fill="rgba(0,0,0,0.15)" stroke="none"/>
-            <circle cx="110" cy="50" r="5" fill="rgba(0,0,0,0.15)" stroke="none"/>
-          </svg>
+           <img src="image/ref.png" alt="參考圖">
         </div>
       </div>
 
