@@ -107,6 +107,7 @@
       pointer-events: none;
       transform: translateX(-50%);
       transition: opacity 0.18s ease;
+      z-index: 500;
     }
     .nav-dropdown.open {
       opacity: 1;
@@ -429,6 +430,7 @@
       letter-spacing: 0.01em;
       transition: color 0.2s;
     }
+    .stage-header .nav-dropdown a { font-size: 13px; }
     .stage-header .nav-logo a:hover,
     .stage-header .nav-links a:hover { color: var(--muted); }
     .stage-header .nav-links {
@@ -1205,15 +1207,15 @@
         <li><a href="index.html#section1">about us</a></li>
         <li><a href="index.html#section4">ladybug</a></li>
         <li class="has-dropdown">
-          <a href="index.html#section6">protect</a>
+         <a href="index.html#section6">protect</a>
           <div class="nav-dropdown">
             <a href="support.html">draw your ladybug</a>
-            <a href="#" onclick="openGalleryDirect(); return false;">gallery</a>
+            <a href="support.html#artworkModal" onclick="openGalleryDirect(); return false;">gallery</a>
           </div>
         </li>
         <li><a href="index.html#section9">contact</a></li>
       </ul>
-      <button class="hamburger" id="hamburgerGallery" aria-label="開啟選單" aria-expanded="false">
+      <button class="hamburger" id="hamburgerDraw" aria-label="開啟選單" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </header>
